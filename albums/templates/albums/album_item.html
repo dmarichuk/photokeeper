@@ -1,0 +1,12 @@
+<div class="col-md-4">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body" >
+            <h5 class="card-title">{{ album.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ album.date }}</h6>
+                <p class="card-text">{{ album.description }}</p>
+                    <a href="{% url 'get_one_album' album.creator.username album.id %}" class="card-link">Open album</a>
+                    <a href="{% url 'add_photo_to_album' album.creator.username album.id %}" class="card-link">Add photo(s)</a>
+                        <a href="#" class="card-link">Edit album</a>
+        </div>
+    </div>
+</div>

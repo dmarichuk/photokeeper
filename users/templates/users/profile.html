@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{user.username}}'s profile{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<div class="container align-items-center">
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <div class="card shadow-sm">
+            <div class="align-self-sm-center">
+                <h1><strong> {{ profile.username }}'s profile </strong></h1>
+            </div>
+            <div class="row">
+                <div class="col-auto">
+                <div class="card-body justify-content-between">
+                    <h3>First name: {{ profile.first_name }}</h3>
+                    <h3>Last name: {{ profile.last_name }}</h3>
+                    <h3>Username: {{ profile.username }}</h3>
+                    <h3>Date of registration: {{ profile.date_joined }}</h3>
+                    <h3>Followers: {{ profile.followers.count }}</h3>
+                    <h3>Follows: {{ profile.follows.count }}</h3>
+                    <h3>Albums: <a href="{% url 'get_all_albums' profile.username %}">{{profile.albums.count}}</a></h3>
+                    <h3>Total likes: {{ profile.likes.count }}</h3>
+                    {% if profile == user %}
+                                <a class="btn btn-outline-dark btn-lg" href="{% url 'edit_profile' profile.username %}" role="button">Edit</a>
+                    {% else %}
+                        {% if user.is_authenticated %}
+                            {% if following %}
+                                <a class="btn btn-lg btn-outline-secondary"
+                                        href="{% url 'unfollow_profile' profile.username %}" role="button">
+                                        Unfollow
+                                </a>
+                                {% else %}
+                                <a class="btn btn-lg btn-secondary"
+                                        href="{% url 'follow_profile' profile.username %}" role="button">
+                                        Follow
+                                </a>
+                                {% endif %}
+                            {% endif %}
+                    {% endif %}
+                </div>
+                </div>
+                <div class="col-3">
+                <div class="align-self-sm-end">
+                                {% load thumbnail %}
+                                {% thumbnail user.avatar "200x200" crop="center" as im %}
+                                    <img class="card-img" src="{{ im.url }}"/>
+                                {% endthumbnail %}
+                </div>
+                </div>
+            </div>
+{#                           {% if user.is_authenticated %}#}
+{#                           <li class="list-group-item">#}
+{#                                #}
+{#                                {% if following %}#}
+{#                                <a class="btn btn-lg btn-light" #}
+{#                                        href="{% url 'profile_unfollow' author.username %}" role="button"> #}
+{#                                        Отписаться #}
+{#                                </a> #}
+{#                                {% else %}#}
+{#                                <a class="btn btn-lg btn-primary" #}
+{#                                        href="{% url 'profile_follow' author.username %}" role="button">#}
+{#                                Подписаться #}
+{#                                </a>#}
+{#                                {% endif %}#}
+{#                            </li>#}
+{#                            {% endif %}#}
+
+
+                    </div>
+            </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} {{ creator.username }}'s albums {% endblock %}
+{% block header %} {% endblock %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            {% if paginator.count is 0 %}
+            <h3>You don't have any albums yet. <a href="{% url 'create_new_album' user.username %}">Create</a> one.</h3>
+            {% endif %}
+            {% for album in page %}
+                {% include 'albums/album_item.html' %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

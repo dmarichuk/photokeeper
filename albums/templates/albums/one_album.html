@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} {{ creator.username }}'s albums {% endblock %}
+{% block header %} {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+    {% if paginator.count == 0 %}
+        {% if user == creator  %}
+        <h3>You don't have any photos in this album yet. <a href="{% url 'add_photo_to_album' user.username album_id %}">Add</a> some.</h3>
+        {% else %}
+        <h3>This album doesn't have any photos yet.</h3>
+        {% endif %}
+    {% endif %}
+        {% for photo in page %}
+            {% include 'albums/photo_item.html' %}
+{% endfor %}
+    </div>
+</div>
+{% endblock %}

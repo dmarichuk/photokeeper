@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Create new album{% endblock %}
+{% block header %}Create new album{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+        <div class="card">
+            <div class="card-header">Create new album</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" action="{% url 'create_new_album' user.username %}">
+                    {% include "albums/album_form.html" %}
+                    <div class="col-md-6 offset-md-4">              
+                        <button type="submit" class="btn btn-primary">Отправить</button>                      
+                    </div>
+                </form>
+            </div> 
+        </div> 
+    </div> 
+</div> 
+{% endblock %}

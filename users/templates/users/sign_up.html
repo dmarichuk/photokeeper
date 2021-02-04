@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Sign up{% endblock %}
+{% block content %}
+{% load css_filters %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+        <div class="card">
+            <div class="card-header">Enter your information</div>
+            <div class="card-body">
+
+                    {% for error in form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+
+                <form method="post" action="{% url 'sign_up' %}">
+                    {% include 'users/create_profile.html' %}
+                    <div class="col-md-6 offset-md-4">
+                            <button type="submit" class="btn btn-primary">
+                                Sign up
+                            </button>
+                    </div>
+                </form> <!-- form -->
+            </div> <!-- card body -->
+        </div> <!-- card -->
+    </div> <!-- col -->
+</div> <!-- row -->
+
+{% endblock %} 
