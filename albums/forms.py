@@ -32,6 +32,16 @@ class PhotoForm(ModelForm):
         }
 
 
+class EditPhotoForm(ModelForm):
+    class Meta:
+        model = Photo
+        fields = ('description',)
+        labels = {
+            'description': _('Description'),
+            'tags': _('Tags (optional)')
+        }
+
+
 class CommentForm(ModelForm):
     class Meta:
         model = Comment

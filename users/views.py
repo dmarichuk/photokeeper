@@ -4,7 +4,7 @@ from django.contrib.auth.views import LogoutView
 from .forms import CreationForm, EditProfileForm
 from .models import User, Follow
 from django.contrib import messages
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 
 
 class SignUp(CreateView):
@@ -48,7 +48,7 @@ def edit_profile(request, username):
         request,
         'users/edit_profile.html',
         {
-            'profile': profile,
+            "profile": profile,
             "form": form,
         })
 

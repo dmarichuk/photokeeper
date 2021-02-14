@@ -28,7 +28,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -78,8 +77,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media'
             ],
-        'libraries':{
-            'css_filters': 'templates.templatetags.css_filters',
+            'libraries':{
+                'css_filters': 'templates.templatetags.css_filters',
             },
         },
     },
@@ -141,7 +140,7 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'files', 'static')
 
 STATICFILES_DIRS = (
-        os.path.join(BASE_DIR,'files','photokeeper', 'static'),
+        os.path.join(BASE_DIR, 'files', 'photokeeper', 'static'),
 )
 STATIC_URL = '/static/'
 STATICFILES_FINDERS = (

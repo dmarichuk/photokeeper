@@ -1,18 +1,49 @@
 {% extends 'base.html' %}
-{% block title %} {{ creator.username }}'s albums {% endblock %}
+{% block title %} {{ album.title }} {% endblock %}
 {% block header %} {% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'get_all_albums' album.creator.username %}">{{ album.creator.username }}'s albums</a></div></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ album.title }}</li>
+    </ol>
+</nav>
+{% endblock %}
 {% block content %}
 <div class="container">
     <div class="row">
     {% if paginator.count == 0 %}
         {% if user == creator  %}
-        <h3>You don't have any photos in this album yet. <a href="{% url 'add_photo_to_album' user.username album_id %}">Add</a> some.</h3>
+        <h3>You don't have any photos in this album yet. <a href="{% url 'add_photo_to_album' user.username album.id %}">Add</a> some.</h3>
         {% else %}
         <h3>This album doesn't have any photos yet.</h3>
         {% endif %}
     {% endif %}
         {% for photo in page %}
-            {% include 'albums/photo_item.html' %}
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                {% load thumbnail %}
+                {% thumbnail photo.photo "348x225" crop="center" upscale=True as im %}
+                <img class="card-img-top" src="{{ im.url }}" />
+                {% endthumbnail %}
+                    <div class="card-body" >
+                        <p class="card-text">{{ photo.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% load humanize %}
+                        <small class="text-muted"> {{ photo.date | naturalday }} </small>
+                        <small class="text-muted"> {{ photo.comments.count }} comments</small>
+                        <small class="text-muted"> {{photo.total_likes}} likes</small>
+                        <div class="btn-group">
+                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'get_album_photo' photo.creator.username album.id photo.id %}" role="button">View</a>
+                        {% if user == photo.creator %}
+                            <a class="btn btn-outline-secondary btn-sm" href="#" role="button">Edit</a>
+                        {% endif %}
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </div>
 {% endfor %}
     </div>
 </div>

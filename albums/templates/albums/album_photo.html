@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% block title %} {{ photo.creator.username }}'s album {% endblock %}
 {% block header %} {% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'get_all_albums' photo.creator %}">{{ photo.creator.username }}'s albums</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'get_one_album' photo.creator album_id %}">Album</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Photo</li>
+    </ol>
+</nav>
+{% endblock %}
 {% block content %}
     <div class="container align-items-center">
         <div class="row justify-content-around">
@@ -24,7 +34,7 @@
                             <p class="card-text">{{ photo.description }}</p>
                         <div class="d-flex justify-content-between ">
                             {% load humanize %}
-                            <p>{{ photo.date | naturaltime }}</p>
+                            <p>{{ photo.date | naturalday }}</p>
                             <p>{{ photo.total_likes }} likes</p>
                         </div>
                         <div class="d-flex justify-content-between ">
@@ -47,7 +57,7 @@
                 </div>
         <div class="align-self-start">
             <a class="btn btn-outline btn-lg"
-               href="{% url 'get_album_photo'  photo.creator.username album_id next.id%}"
+               href="{% url 'get_album_photo'  photo.creator.username album_id next.id %}"
                role="button">
                 <span><svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16"><path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"/></svg></span>
             </a>

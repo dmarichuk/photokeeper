@@ -1,7 +1,17 @@
 {% extends 'base.html' %}
 {% block title %} {{ creator.username }}'s albums {% endblock %}
 {% block header %} {% endblock %}
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ creator.username }}'s albums</li>
+        </ol>
+    </nav>
+{% endblock %}
 {% block content %}
+
+
 
     <div class="container">
         <div class="row">
@@ -9,7 +19,18 @@
             <h3>You don't have any albums yet. <a href="{% url 'create_new_album' user.username %}">Create</a> one.</h3>
             {% endif %}
             {% for album in page %}
-                {% include 'albums/album_item.html' %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body" >
+                        <h5 class="card-title">{{ album.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ album.date }}</h6>
+                            <p class="card-text">{{ album.description }}</p>
+                                <a href="{% url 'get_one_album' album.creator.username album.id %}" class="card-link">Open</a>
+                                <a href="{% url 'add_photo_to_album' album.creator.username album.id %}" class="card-link">Add photo</a>
+                                <a href="{% url 'edit_album' album.creator.username album.id %}" class="card-link">Edit</a>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
         </div>
     </div>

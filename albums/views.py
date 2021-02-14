@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import (
+    render, get_object_or_404, get_list_or_404, redirect)
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import TemplateView
@@ -29,7 +30,8 @@ def get_all_albums(request, username):
 
 @login_required
 def get_one_album(request, username, album_id):
-    photos = Photo.objects.filter(creator__username=username, album_id=album_id)
+    album = Album.objects.get(pk=album_id)
+    photos = album.photos.all()
     paginator = Paginator(photos, 20)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -38,7 +40,7 @@ def get_one_album(request, username, album_id):
         'albums/one_album.html',
         {'page': page,
          'paginator': paginator,
-         'album_id': album_id,
+         'album': album
          })
 
 
@@ -82,6 +84,31 @@ def create_new_album(request, username):
     return render(request, 'albums/create_new_album.html', {"form": form})
 
 
+def edit_album(request, username, album_id):
+    album = get_object_or_404(Album, creator__username=username, id=album_id)
+    if request.user != album.creator:
+        return redirect(
+            "get_one_album", username=album.creator, album_id=album_id)
+    form = AlbumForm(
+         request.POST or None, files=request.FILES or None, instance=album)
+    if form.is_valid():
+        form.save()
+        return redirect(
+            "get_all_albums", username=album.creator)
+    return render(
+        request,
+        'albums/edit_album.html',
+        {"album": album, "form": form}
+        )
+
+
+def delete_album(request, username, album_id):
+    album = Album.objects.get(pk=album_id)
+    if request.user == album.creator:
+        album.delete()
+    return redirect("get_all_albums", username=album.creator)
+
+
 @login_required()
 def add_photo_to_album(request, username, album_id):
     if request.method != "POST":
@@ -105,6 +132,40 @@ def add_photo_to_album(request, username, album_id):
                 "albums/add_photo_to_album.html",
                 {"form": form, 'album_id': album_id})
     return redirect('get_one_album', request.user.username, album_id)
+
+
+def edit_photo(request, username, album_id, photo_id):
+    album = Album.objects.get(pk=album_id)
+    photo = album.photos.get(pk=photo_id)
+    if request.user != photo.creator:
+        return redirect(
+            "get_album_photo",
+            username=photo.creator,
+            album_id=album_id,
+            photo_id=photo_id)
+    form = PhotoForm(
+         request.POST or None, files=request.FILES or None, instance=photo)
+    if form.is_valid():
+        form.save()
+        return redirect(
+            "get_album_photo",
+            username=photo.creator,
+            album_id=album_id,
+            photo_id=photo_id)
+    return render(
+        request,
+        'albums/edit_photo.html',
+        {
+            "album": album,
+            "photo": photo,
+            "form": form
+        })
+
+
+def delete_photo(request, username, album_id, photo_id):
+    photo = get_object_or_404(pk=photo_id)
+    photo.delete()
+    return redirect('get_one_album', username=username, album_id=album_id)
 
 
 @login_required()
@@ -131,3 +192,15 @@ def add_comment(request, username, album_id, photo_id):
         )
     return render(
         request, "albums/album_photo.html", {"photo": photo, "form": form})
+
+
+def delete_comment(request):
+    pass
+
+
+def add_like(request):
+    pass
+
+
+def delete_like(request):
+    pass

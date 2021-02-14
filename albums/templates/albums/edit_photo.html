@@ -1,13 +1,23 @@
 {% extends "base.html" %}
-{% block title %}Create new album{% endblock %}
-{% block header %}Create new album{% endblock %}
+{% block title %}Edit album {{album.title}}{% endblock %}
+{% block header %}Edit album {{album.title}}{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'get_all_albums' photo.creator %}">{{ album.creator.username }}'s albums</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'get_one_album' photo.creator album.id %}">{{ album.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'get_album_photo' photo.creator album.id photo.id%}">Current Photo</a></li>
+    </ol>
+</nav>
+{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8 p-5">
         <div class="card">
-            <div class="card-header">Create new album</div>
+            <div class="card-header">Edit photo</div>
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data" action="{% url 'create_new_album' user.username %}">
+                <form method="post" enctype="multipart/form-data" action="{% url 'edit_profile' user.username %}">
                     {% csrf_token %}
                     {% load css_filters %}
                     {% for error in form.errors.values %}
@@ -33,5 +43,5 @@
             </div> 
         </div> 
     </div> 
-</div> 
+</div>
 {% endblock %}
