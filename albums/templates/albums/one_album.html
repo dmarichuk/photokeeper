@@ -37,7 +37,7 @@
                         <div class="btn-group">
                             <a class="btn btn-outline-secondary btn-sm" href="{% url 'get_album_photo' photo.creator.username album.id photo.id %}" role="button">View</a>
                         {% if user == photo.creator %}
-                            <a class="btn btn-outline-secondary btn-sm" href="#" role="button">Edit</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'edit_photo' photo.creator.username album.id photo.id %}" role="button">Edit</a>
                         {% endif %}
                         </div>
                     </div>

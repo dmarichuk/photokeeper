@@ -28,7 +28,7 @@ def add_like(obj, user):
     return like
 
 
-def remove_like(obj, user):
+def delete_like(obj, user):
     """Delete like from `obj`."""
     obj_type = ContentType.objects.get_for_model(obj)
     Like.objects.filter(

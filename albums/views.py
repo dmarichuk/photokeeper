@@ -3,8 +3,9 @@ from django.shortcuts import (
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import TemplateView
-from .models import User, Album, Photo
-from .forms import AlbumForm, PhotoForm, CommentForm
+from .models import User, Album, Photo, Comment
+from .forms import AlbumForm, PhotoForm, CommentForm, EditPhotoForm
+from .services import add_like, delete_like, is_fan
 from linkedlist.linked_list import CycleDoublyLinkedList as cdll
 
 
@@ -14,8 +15,8 @@ class IndexView(TemplateView):
 
 @login_required
 def get_all_albums(request, username):
-    albums = Album.objects.filter(creator__username=username)
-    creator = User.objects.get(username=username)
+    creator = get_object_or_404(User, username=username)
+    albums = Album.objects.filter(creator=creator)
     paginator = Paginator(albums, 9)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -30,7 +31,7 @@ def get_all_albums(request, username):
 
 @login_required
 def get_one_album(request, username, album_id):
-    album = Album.objects.get(pk=album_id)
+    album = get_object_or_404(Album, id=album_id)
     photos = album.photos.all()
     paginator = Paginator(photos, 20)
     page_number = request.GET.get('page')
@@ -48,7 +49,9 @@ def get_one_album(request, username, album_id):
 def get_album_photo(request, username, album_id, photo_id):
     photos = get_list_or_404(Photo, album__id=album_id)
     lst = cdll(photos)
-    photo = Photo.objects.get(pk=photo_id)
+    album = Album.objects.get(pk=album_id)
+    photo = album.photos.get(pk=photo_id)
+    liked = is_fan(photo, request.user)
     get_next = lst.get_next(photo)
     get_prev = lst.get_prev(photo)
     comments = photo.comments.all()
@@ -65,7 +68,8 @@ def get_album_photo(request, username, album_id, photo_id):
             'page': page,
             'paginator': paginator,
             'form': CommentForm,
-            'album_id': album_id
+            'album': album,
+            'liked': liked,
         }
     )
 
@@ -83,7 +87,7 @@ def create_new_album(request, username):
         return redirect('get_all_albums', request.user.username)
     return render(request, 'albums/create_new_album.html', {"form": form})
 
-
+@login_required
 def edit_album(request, username, album_id):
     album = get_object_or_404(Album, creator__username=username, id=album_id)
     if request.user != album.creator:
@@ -101,15 +105,15 @@ def edit_album(request, username, album_id):
         {"album": album, "form": form}
         )
 
-
+@login_required
 def delete_album(request, username, album_id):
-    album = Album.objects.get(pk=album_id)
+    album = get_object_or_404(Album, id=album_id)
     if request.user == album.creator:
         album.delete()
     return redirect("get_all_albums", username=album.creator)
 
 
-@login_required()
+@login_required
 def add_photo_to_album(request, username, album_id):
     if request.method != "POST":
         form = PhotoForm()
@@ -133,9 +137,9 @@ def add_photo_to_album(request, username, album_id):
                 {"form": form, 'album_id': album_id})
     return redirect('get_one_album', request.user.username, album_id)
 
-
+@login_required
 def edit_photo(request, username, album_id, photo_id):
-    album = Album.objects.get(pk=album_id)
+    album = get_object_or_404(Album, id=album_id)
     photo = album.photos.get(pk=photo_id)
     if request.user != photo.creator:
         return redirect(
@@ -143,7 +147,7 @@ def edit_photo(request, username, album_id, photo_id):
             username=photo.creator,
             album_id=album_id,
             photo_id=photo_id)
-    form = PhotoForm(
+    form = EditPhotoForm(
          request.POST or None, files=request.FILES or None, instance=photo)
     if form.is_valid():
         form.save()
@@ -161,14 +165,28 @@ def edit_photo(request, username, album_id, photo_id):
             "form": form
         })
 
-
+@login_required
 def delete_photo(request, username, album_id, photo_id):
-    photo = get_object_or_404(pk=photo_id)
-    photo.delete()
-    return redirect('get_one_album', username=username, album_id=album_id)
+    if request.user.username == username:
+        photos = get_list_or_404(Photo, album__id=album_id)
+        lst = cdll(photos)
+        photo = Photo.objects.get(pk=photo_id)
+        get_next = lst.get_next(photo)
+        photo.delete()
+        return redirect(
+            'get_album_photo',
+            username=username,
+            album_id=album_id,
+            photo_id=get_next.id
+            )
+    return redirect(
+        'get_album_photo',
+        username=username,
+        album_id=album_id,
+        photo_id=photo_id
+        )
 
-
-@login_required()
+@login_required
 def add_comment(request, username, album_id, photo_id):
     photo = get_object_or_404(
         Photo,
@@ -193,14 +211,40 @@ def add_comment(request, username, album_id, photo_id):
     return render(
         request, "albums/album_photo.html", {"photo": photo, "form": form})
 
+@login_required
+def delete_comment(request, username, album_id, photo_id, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if comment.creator == request.user:
+        comment.delete()
+        return redirect(
+            "get_album_photo",
+            username=username,
+            album_id=album_id,
+            photo_id=photo_id)
+    return redirect(
+            "get_album_photo",
+            username=username,
+            album_id=album_id,
+            photo_id=photo_id)
 
-def delete_comment(request):
-    pass
+@login_required
+def add_like_view(request, username, album_id, photo_id):
+    photo = get_object_or_404(Photo, id=photo_id)
+    add_like(photo, request.user)
+    return redirect(
+            'get_album_photo',
+            username=username,
+            album_id=album_id,
+            photo_id=photo_id
+            )
 
-
-def add_like(request):
-    pass
-
-
-def delete_like(request):
-    pass
+@login_required
+def delete_like_view(request, username, album_id, photo_id):
+    photo = get_object_or_404(Photo, id=photo_id)
+    delete_like(photo, request.user)
+    return redirect(
+            'get_album_photo',
+            username=username,
+            album_id=album_id,
+            photo_id=photo_id
+            )
