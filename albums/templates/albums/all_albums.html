@@ -16,7 +16,7 @@
     <div class="container">
         <div class="row">
             {% if paginator.count is 0 %}
-            <h3>You don't have any albums yet. <a href="{% url 'create_new_album' user.username %}">Create</a> one.</h3>
+            <h3>You don't have any albums yet. <a href="{% url 'new_album' user.username %}">Create</a> one.</h3>
             {% endif %}
             {% for album in page %}
             <div class="col-md-4">
@@ -25,9 +25,12 @@
                         <h5 class="card-title">{{ album.title }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ album.date }}</h6>
                             <p class="card-text">{{ album.description }}</p>
-                                <a href="{% url 'get_one_album' album.creator.username album.id %}" class="card-link">Open</a>
-                                <a href="{% url 'add_photo_to_album' album.creator.username album.id %}" class="card-link">Add photo</a>
+                                <a href="{% url 'one_album' album.creator.username album.id %}" class="card-link">Open</a>
+                                <a href="{% url 'add_photo' album.creator.username album.id %}" class="card-link">Add photo</a>
                                 <a href="{% url 'edit_album' album.creator.username album.id %}" class="card-link">Edit</a>
+                                {% if user == creator %}
+                                <a href="{% url 'delete_album' album.creator.username album.id %}" class="card-link"><span style="color: red;">Delete</span></a>
+                                {% endif %}
                     </div>
                 </div>
             </div>

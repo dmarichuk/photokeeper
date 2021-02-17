@@ -25,11 +25,11 @@
                 <p>It is a learning project so any feedback would be appreciated.</p></h3>
                 <div class="row">
                     <div class="col-md-4-2">
-                        <a href="{% url 'create_new_album' user.username %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Create new album</a>
+                        <a href="{% url 'new_album' user.username %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Create new album</a>
                     </div>
                     <div class="col-md-auto"></div>
                     <div class="col-md-4-2">
-                        <a href="{% url 'get_all_albums' user.username %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">My albums</a>
+                        <a href="{% url 'all_albums' user.username %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">My albums</a>
                     </div>
                 </div>
             </div>

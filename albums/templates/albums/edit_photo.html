@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Edit album {{album.title}}{% endblock %}
-{% block header %}Edit album {{album.title}}{% endblock %}
+{% block title %}Edit photo from {{album.title}}{% endblock %}
+{% block header %}Edit photo from {{album.title}}{% endblock %}
 {% block breadcrumbs %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'get_all_albums' photo.creator %}">{{ album.creator.username }}'s albums</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'get_one_album' photo.creator album.id %}">{{ album.title }}</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'get_album_photo' photo.creator album.id photo.id%}">Current Photo</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'all_albums' photo.creator %}">{{ album.creator.username }}'s albums</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'one_album' photo.creator album.id %}">{{ album.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'get_photo' photo.creator album.id photo.id%}">{{ photo.id }}</a></li>
     </ol>
 </nav>
 {% endblock %}
@@ -37,8 +37,7 @@
                          </div>
                     {% endfor %}
                     <div class="col-md-6 offset-md-4">              
-                        <button type="submit" class="btn btn-primary">Отправить</button>
-                        <a class="btn btn-danger" href="{% url 'delete_photo' album.creator.username album.id photo.id %}" role="button">Delete</a>                      
+                        <button type="submit" class="btn btn-primary">Submit</button>                      
                     </div>
                 </form>
             </div> 

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Add photo(s) to album{% endblock %}
-{% block header %}Add photo(s) to album{% endblock %}
+{% block title %}Create new album{% endblock %}
+{% block header %}Create new album{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8 p-5">
         <div class="card">
             <div class="card-header">Create new album</div>
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data" action="{% url 'add_photo_to_album' user.username album_id %}">
+                <form method="post" enctype="multipart/form-data" action="{% url 'new_album' user.username %}">
                     {% csrf_token %}
                     {% load css_filters %}
                     {% for error in form.errors.values %}
@@ -22,9 +22,9 @@
                             {{ field|addclass:"form-control" }}
                                 {% if field.help_text %}
                                     <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
-                                 {% endif %}
+                                {% endif %}
                             </div>
-                        </div>
+                         </div>
                     {% endfor %}
                     <div class="col-md-6 offset-md-4">              
                         <button type="submit" class="btn btn-primary">Отправить</button>                      

@@ -36,7 +36,7 @@ class Photo(models.Model):
         upload_to='photos/')
     description = models.TextField(
         verbose_name=_("photo's description"),
-        help_text=_('(optional field)short photo description'),
+        help_text=_('(optional field) short photo description'),
         max_length=256,
         blank=True, null=True)
     date = models.DateTimeField(

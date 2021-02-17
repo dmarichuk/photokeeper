@@ -5,8 +5,8 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'get_all_albums' album.creator.username %}">{{ album.creator.username }}'s albums</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'get_one_album' album.creator.username album.id %}">Album</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'all_albums' album.creator.username %}">{{ album.creator.username }}'s albums</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'one_album' album.creator.username album.id %}">Album</a></li>
         <li class="breadcrumb-item active" aria-current="page">Edit album</li>
     </ol>
 </nav>
@@ -37,8 +37,7 @@
                          </div>
                     {% endfor %}
                     <div class="col-md-6 offset-md-4">              
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <a class="btn btn-danger" href="{% url 'delete_album' album.creator.username album.id %}" role="button">Delete</a>                      
+                        <button type="submit" class="btn btn-primary">Submit</button>                      
                     </div>
                 </form>
             </div> 

@@ -14,7 +14,7 @@ class IndexView(TemplateView):
 
 
 @login_required
-def get_all_albums(request, username):
+def all_albums(request, username):
     creator = get_object_or_404(User, username=username)
     albums = Album.objects.filter(creator=creator)
     paginator = Paginator(albums, 9)
@@ -30,7 +30,7 @@ def get_all_albums(request, username):
 
 
 @login_required
-def get_one_album(request, username, album_id):
+def one_album(request, username, album_id):
     album = get_object_or_404(Album, id=album_id)
     photos = album.photos.all()
     paginator = Paginator(photos, 20)
@@ -46,7 +46,7 @@ def get_one_album(request, username, album_id):
 
 
 @login_required
-def get_album_photo(request, username, album_id, photo_id):
+def get_photo(request, username, album_id, photo_id):
     photos = get_list_or_404(Photo, album__id=album_id)
     lst = cdll(photos)
     album = Album.objects.get(pk=album_id)
@@ -60,7 +60,7 @@ def get_album_photo(request, username, album_id, photo_id):
     page = paginator.get_page(page_number)
     return render(
         request,
-        'albums/album_photo.html',
+        'albums/get_photo.html',
         {
             'photo': photo,
             'next': get_next,
@@ -75,30 +75,30 @@ def get_album_photo(request, username, album_id, photo_id):
 
 
 @login_required
-def create_new_album(request, username):
+def new_album(request, username):
     if request.method != "POST":
         form = AlbumForm()
-        return render(request, "albums/create_new_album.html", {"form": form})
+        return render(request, "albums/new_album.html", {"form": form})
     form = AlbumForm(request.POST)
     if form.is_valid():
         album = form.save(commit=False)
         album.creator = request.user
         album.save()
-        return redirect('get_all_albums', request.user.username)
-    return render(request, 'albums/create_new_album.html', {"form": form})
+        return redirect('all_albums', request.user.username)
+    return render(request, 'albums/new_album.html', {"form": form})
 
 @login_required
 def edit_album(request, username, album_id):
     album = get_object_or_404(Album, creator__username=username, id=album_id)
     if request.user != album.creator:
         return redirect(
-            "get_one_album", username=album.creator, album_id=album_id)
+            "one_album", username=album.creator, album_id=album_id)
     form = AlbumForm(
          request.POST or None, files=request.FILES or None, instance=album)
     if form.is_valid():
         form.save()
         return redirect(
-            "get_all_albums", username=album.creator)
+            "all_albums", username=album.creator)
     return render(
         request,
         'albums/edit_album.html',
@@ -110,16 +110,16 @@ def delete_album(request, username, album_id):
     album = get_object_or_404(Album, id=album_id)
     if request.user == album.creator:
         album.delete()
-    return redirect("get_all_albums", username=album.creator)
+    return redirect("all_albums", username=album.creator)
 
 
 @login_required
-def add_photo_to_album(request, username, album_id):
+def add_photo(request, username, album_id):
     if request.method != "POST":
         form = PhotoForm()
         return render(
             request,
-            "albums/add_photo_to_album.html",
+            "albums/add_photo.html",
             {"form": form, 'album_id': album_id})
     files = request.FILES.getlist('photo')
     for f in files:
@@ -133,9 +133,9 @@ def add_photo_to_album(request, username, album_id):
         else:
             return render(
                 request,
-                "albums/add_photo_to_album.html",
+                "albums/add_photo.html",
                 {"form": form, 'album_id': album_id})
-    return redirect('get_one_album', request.user.username, album_id)
+    return redirect('one_album', request.user.username, album_id)
 
 @login_required
 def edit_photo(request, username, album_id, photo_id):
@@ -143,7 +143,7 @@ def edit_photo(request, username, album_id, photo_id):
     photo = album.photos.get(pk=photo_id)
     if request.user != photo.creator:
         return redirect(
-            "get_album_photo",
+            "get_photo",
             username=photo.creator,
             album_id=album_id,
             photo_id=photo_id)
@@ -152,7 +152,7 @@ def edit_photo(request, username, album_id, photo_id):
     if form.is_valid():
         form.save()
         return redirect(
-            "get_album_photo",
+            "get_photo",
             username=photo.creator,
             album_id=album_id,
             photo_id=photo_id)
@@ -174,13 +174,13 @@ def delete_photo(request, username, album_id, photo_id):
         get_next = lst.get_next(photo)
         photo.delete()
         return redirect(
-            'get_album_photo',
+            'get_photo',
             username=username,
             album_id=album_id,
             photo_id=get_next.id
             )
     return redirect(
-        'get_album_photo',
+        'get_photo',
         username=username,
         album_id=album_id,
         photo_id=photo_id
@@ -203,7 +203,7 @@ def add_comment(request, username, album_id, photo_id):
         comment.photo = photo
         comment.save()
         return redirect(
-            'get_album_photo',
+            'get_photo',
             username=username,
             album_id=album_id,
             photo_id=photo_id
@@ -217,12 +217,12 @@ def delete_comment(request, username, album_id, photo_id, comment_id):
     if comment.creator == request.user:
         comment.delete()
         return redirect(
-            "get_album_photo",
+            "get_photo",
             username=username,
             album_id=album_id,
             photo_id=photo_id)
     return redirect(
-            "get_album_photo",
+            "get_photo",
             username=username,
             album_id=album_id,
             photo_id=photo_id)
@@ -232,7 +232,7 @@ def add_like_view(request, username, album_id, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
     add_like(photo, request.user)
     return redirect(
-            'get_album_photo',
+            'get_photo',
             username=username,
             album_id=album_id,
             photo_id=photo_id
@@ -243,7 +243,7 @@ def delete_like_view(request, username, album_id, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
     delete_like(photo, request.user)
     return redirect(
-            'get_album_photo',
+            'get_photo',
             username=username,
             album_id=album_id,
             photo_id=photo_id

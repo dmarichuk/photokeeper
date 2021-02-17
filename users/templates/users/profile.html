@@ -26,7 +26,7 @@
                     <h3>Date of registration: {{ profile.date_joined }}</h3>
                     <h3>Followers: {{ profile.followers.count }}</h3>
                     <h3>Follows: {{ profile.follows.count }}</h3>
-                    <h3>Albums: <a href="{% url 'get_all_albums' profile.username %}">{{profile.albums.count}}</a></h3>
+                    <h3>Albums: <a href="{% url 'all_albums' profile.username %}">{{profile.albums.count}}</a></h3>
                     <h3>Total likes: {{ profile.likes.count }}</h3>
                     {% if profile == user %}
                                 <a class="btn btn-outline-dark btn-lg" href="{% url 'edit_profile' profile.username %}" role="button">Edit</a>

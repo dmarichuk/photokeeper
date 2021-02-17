@@ -5,7 +5,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'get_all_albums' album.creator.username %}">{{ album.creator.username }}'s albums</a></div></li>
+        <li class="breadcrumb-item"><a href="{% url 'all_albums' album.creator.username %}">{{ album.creator.username }}'s albums</a></div></li>
         <li class="breadcrumb-item active" aria-current="page">{{ album.title }}</li>
     </ol>
 </nav>
@@ -15,7 +15,7 @@
     <div class="row">
     {% if paginator.count == 0 %}
         {% if user == creator  %}
-        <h3>You don't have any photos in this album yet. <a href="{% url 'add_photo_to_album' user.username album.id %}">Add</a> some.</h3>
+        <h3>You don't have any photos in this album yet. <a href="{% url 'add_photo' user.username album.id %}">Add</a> some.</h3>
         {% else %}
         <h3>This album doesn't have any photos yet.</h3>
         {% endif %}
@@ -35,7 +35,7 @@
                         <small class="text-muted"> {{ photo.comments.count }} comments</small>
                         <small class="text-muted"> {{photo.total_likes}} likes</small>
                         <div class="btn-group">
-                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'get_album_photo' photo.creator.username album.id photo.id %}" role="button">View</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'get_photo' photo.creator.username album.id photo.id %}" role="button">View</a>
                         {% if user == photo.creator %}
                             <a class="btn btn-outline-secondary btn-sm" href="{% url 'edit_photo' photo.creator.username album.id photo.id %}" role="button">Edit</a>
                         {% endif %}
