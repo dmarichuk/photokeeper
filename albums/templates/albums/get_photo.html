@@ -2,6 +2,17 @@
 {% block title %} {{ photo.creator.username }}'s album {% endblock %}
 {% block header %} {% endblock %}
 {% block breadcrumbs %}
+<script>
+    document.onkeydown = nextPhoto(key) {
+        switch (key.which) {
+            case 37:
+            
+            case 39:
+
+        }
+    }
+
+</script>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -29,7 +40,13 @@
                     {% thumbnail photo.photo "800x600" crop="center" upscale=True as im %}
                     <img class="card-img-top" src="{{ im.url }}" />
                     {% endthumbnail %}
-
+                    {% if tags %}
+                    <p>Photo tags: 
+                        {% for tag in tags %}
+                            <a class="badge badge-dark"><span style="color: white;">{{ tag }}</span></a>
+                        {% endfor %}
+                        </p>
+                    {% endif %}
                         <div class="card-body" >
                             <p class="card-text">{{ photo.description }}</p>
                         <div class="d-flex justify-content-between ">

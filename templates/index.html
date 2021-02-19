@@ -15,6 +15,8 @@
         </button>
     </div>
 {% endif %}
+<div class="jumbotron-fluid">
+
     <div class="container-fluid">
 
         {% if user.is_authenticated %}
@@ -50,6 +52,33 @@
             </div>
         {% endif %}
     </div>
+</div>    
+    <div>
+        <h3>News</h3>
+        <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Last updates</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">My news</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">My updates</a>
+        </li>
+        </div>
+        
+        <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example" tabindex="0">
+            
+            <h5 id="list-item-1">Элемент 1</h5>
+            <h5 id="list-item-1">Элемент 1</h5>
+            <h5 id="list-item-1">Элемент 1</h5>
+            <h5 id="list-item-1">Элемент 1</h5>
+            
+            
+            
+
+        </div>
+
 
 
 {% endblock %}

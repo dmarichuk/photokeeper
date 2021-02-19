@@ -1,23 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from .models import Like, Tag
+from .models import Like
 
 User = get_user_model()
-
-
-def add_tag(obj, name):
-    """Create tag for 'obj'."""
-    obj_type = ContentType.objects.get_for_model(obj)
-    tag, is_created = Tag.objects.get_or_create(
-        content_type=obj_type, object_id=obj.id, name=name)
-    return tag
-
-
-def remove_tag(obj, name):
-    """Remove tag from 'obj'."""
-    obj_type = ContentType.objects.get_for_model(obj)
-    Tag.objects.filter(
-        content_type=obj_type, object_id=obj.id, name=name).delete()
 
 
 def add_like(obj, user):

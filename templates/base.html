@@ -7,14 +7,17 @@
     <title>{% block title %} {% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
-    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
-    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap4-tagsinput/tagsinput.css' %}" />
 </head>
 
 
 
 
 <body class="d-flex flex-column h-100">
+    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'bootstrap4-tagsinput/tagsinput.js' %}"></script>
+    
     {% include 'nav.html' %}
     {% block breadcrumbs %}
     {% endblock %}

@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from taggit.managers import TaggableManager
 
 User = get_user_model()
 
@@ -21,7 +22,7 @@ class Album(models.Model):
         verbose_name=_("creation date"),
         auto_now_add=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
-    tags = GenericRelation('Tag')
+    tags = TaggableManager(blank=True)
 
     class Meta:
         ordering = ['-date']
@@ -53,7 +54,7 @@ class Photo(models.Model):
         related_name='photos',
         related_query_name='photo')
     likes = GenericRelation('Like')
-    tags = GenericRelation('Tag')
+    tags = TaggableManager(blank=True)
 
     class Meta:
         ordering = ['-date']
@@ -97,19 +98,6 @@ class Comment(models.Model):
     @property
     def total_likes(self):
         return self.likes.count()
-
-
-class Tag(models.Model):
-    name = models.SlugField(
-        verbose_name=_('tag'),
-        help_text=_('32 characters allowed'),
-        max_length=32)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    def __unicode__(self):
-        return self.name
 
 
 class Like(models.Model):

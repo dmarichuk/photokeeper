@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     # Other apps
 
     'sorl.thumbnail',
+    'taggit',
 
     # Default apps
 
@@ -159,3 +160,5 @@ LOGOUT_REDIRECT_URL = 'index'
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'files', 'sent_emails')
+
+TAGGIT_CASE_INSENSITIVE = True

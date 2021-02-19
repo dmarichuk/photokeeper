@@ -51,6 +51,7 @@ def get_photo(request, username, album_id, photo_id):
     lst = cdll(photos)
     album = Album.objects.get(pk=album_id)
     photo = album.photos.get(pk=photo_id)
+    tags = photo.tags.all()
     liked = is_fan(photo, request.user)
     get_next = lst.get_next(photo)
     get_prev = lst.get_prev(photo)
@@ -70,26 +71,42 @@ def get_photo(request, username, album_id, photo_id):
             'form': CommentForm,
             'album': album,
             'liked': liked,
+            'tags': tags
         }
     )
 
 
 @login_required
 def new_album(request, username):
-    if request.method != "POST":
+    common_tags = Album.tags.most_common()[:4]
+    if request.method != 'POST':
         form = AlbumForm()
-        return render(request, "albums/new_album.html", {"form": form})
+        return render(
+            request,
+            'albums/new_album.html',
+            {
+                'form': form,
+                'common_tags': common_tags,
+            })
     form = AlbumForm(request.POST)
     if form.is_valid():
         album = form.save(commit=False)
         album.creator = request.user
         album.save()
-        return redirect('all_albums', request.user.username)
-    return render(request, 'albums/new_album.html', {"form": form})
+        form.save_m2m()
+        return redirect('all_albums', username=request.user.username)
+    return render(
+        request,
+        'albums/new_album.html',
+        {
+         'form': form,
+         'common_tags': common_tags,
+        })
+
 
 @login_required
 def edit_album(request, username, album_id):
-    album = get_object_or_404(Album, creator__username=username, id=album_id)
+    album = get_object_or_404(Album, id=album_id)
     if request.user != album.creator:
         return redirect(
             "one_album", username=album.creator, album_id=album_id)
@@ -115,12 +132,17 @@ def delete_album(request, username, album_id):
 
 @login_required
 def add_photo(request, username, album_id):
+    common_tags = Photo.tags.most_common()[:4]
     if request.method != "POST":
         form = PhotoForm()
         return render(
             request,
             "albums/add_photo.html",
-            {"form": form, 'album_id': album_id})
+            {
+                "form": form,
+                'album_id': album_id,
+                'common_tags': common_tags
+                })
     files = request.FILES.getlist('photo')
     for f in files:
         form = PhotoForm(request.POST, files=request.FILES)
@@ -130,11 +152,16 @@ def add_photo(request, username, album_id):
             photo.creator = request.user
             photo.album = Album.objects.get(pk=album_id)
             photo.save()
+            form.save_m2m()
         else:
             return render(
                 request,
                 "albums/add_photo.html",
-                {"form": form, 'album_id': album_id})
+                {
+                    "form": form,
+                    'album_id': album_id,
+                    'common_tags': common_tags,
+                    })
     return redirect('one_album', request.user.username, album_id)
 
 @login_required
