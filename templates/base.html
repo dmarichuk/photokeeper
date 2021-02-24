@@ -3,20 +3,25 @@
 
 <head>
     <meta charset="utf-8">
+    <meta lang="en-US">
+    <meta name="author" content="d_marichuk@mail.ru">
+    <meta name="description" content="Photokeeper is a web-application for storing and keeping your photos organized and safe.">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %} {% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap4-tagsinput/tagsinput.css' %}" />
+    <link rel="stylesheet" href="{% static 'bootstrap4-tagsinput/tagsinput.css' %}">
+    <link rel="shortcut icon" href="files/icons/favicon.ico" type="image/x-icon">
+    <script src="{% static 'jquery/dist/jquery.min.js' %}" defer></script>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}" defer></script>
+    <script src="{% static 'bootstrap4-tagsinput/tagsinput.js' %}" defer></script>
 </head>
 
 
 
 
 <body class="d-flex flex-column h-100">
-    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
-    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'bootstrap4-tagsinput/tagsinput.js' %}"></script>
+    
     
     {% include 'nav.html' %}
     {% block breadcrumbs %}

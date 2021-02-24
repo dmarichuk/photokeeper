@@ -7,6 +7,7 @@ from .models import User, Album, Photo, Comment
 from .forms import AlbumForm, PhotoForm, CommentForm, EditPhotoForm
 from .services import add_like, delete_like, is_fan
 from linkedlist.linked_list import CycleDoublyLinkedList as cdll
+from django.db.models import Q
 
 
 class IndexView(TemplateView):
@@ -17,7 +18,7 @@ class IndexView(TemplateView):
 def all_albums(request, username):
     creator = get_object_or_404(User, username=username)
     albums = Album.objects.filter(creator=creator)
-    paginator = Paginator(albums, 9)
+    paginator = Paginator(albums, 8)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
@@ -164,6 +165,7 @@ def add_photo(request, username, album_id):
                     })
     return redirect('one_album', request.user.username, album_id)
 
+
 @login_required
 def edit_photo(request, username, album_id, photo_id):
     album = get_object_or_404(Album, id=album_id)
@@ -191,6 +193,7 @@ def edit_photo(request, username, album_id, photo_id):
             "photo": photo,
             "form": form
         })
+
 
 @login_required
 def delete_photo(request, username, album_id, photo_id):
@@ -275,3 +278,25 @@ def delete_like_view(request, username, album_id, photo_id):
             album_id=album_id,
             photo_id=photo_id
             )
+
+
+def search(request):
+    query = request.GET.get('q')
+
+    users = User.objects.filter(username__icontains=query)
+    photos = Photo.objects.select_related('album').filter(tags__name__in=[query])
+    albums = Album.objects.filter(Q(title__icontains=query) | Q(tags__name__in=[query]))
+    paginator_albums = Paginator(albums, 5)
+    page_number = 1
+    page = paginator_albums.get_page(page_number)
+    return render(
+        request,
+        'search.html',
+        {   
+            'p': paginator_albums,
+            'page': page,
+            'users': users,
+            'photos': photos,
+            'albums': albums,
+        }
+    )

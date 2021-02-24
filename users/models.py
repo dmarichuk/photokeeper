@@ -12,6 +12,8 @@ class User(AbstractUser):
         blank=True
         )
 
+    class Meta:
+        ordering = ['username']
 
 class Follow(models.Model):
     user = models.ForeignKey(

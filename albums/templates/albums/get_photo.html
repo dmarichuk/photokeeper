@@ -1,18 +1,26 @@
 {% extends 'base.html' %}
 {% block title %} {{ photo.creator.username }}'s album {% endblock %}
-{% block header %} {% endblock %}
-{% block breadcrumbs %}
-<script>
-    document.onkeydown = nextPhoto(key) {
+{% block header %} 
+<script defer>
+    
+    document.onkeydown = function getNext(key){
+    
+        var previous = document.querySelector('#previous_photo');
+        var next = document.querySelector('#next_photo');   
+        
         switch (key.which) {
             case 37:
-            
+                previous.click();
+                break;
             case 39:
-
+                next.click();
+                break;
+            default: return;
         }
     }
+</script>{% endblock %}
+{% block breadcrumbs %}
 
-</script>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -26,7 +34,8 @@
     <div class="container align-items-center">
         <div class="row justify-content-around">
             <div class="align-self-start">
-                <a class="btn btn-outline btn-lg"
+                <a id="previous_photo"
+                   class="btn btn-outline btn-lg"
                    href="{% url 'get_photo'  photo.creator.username album.id prev.id%}"
                    role="button">
                     <span><svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16"><path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z"/></svg></span>
@@ -85,7 +94,8 @@
 
                 </div>
         <div class="align-self-start">
-            <a class="btn btn-outline btn-lg"
+            <a id="next_photo"
+               class="btn btn-outline btn-lg"
                href="{% url 'get_photo' photo.creator.username album.id next.id %}"
                role="button">
                 <span><svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16"><path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"/></svg></span>

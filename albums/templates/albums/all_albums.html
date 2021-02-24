@@ -15,8 +15,20 @@
 
     <div class="container">
         <div class="row">
+            {% if user == creator %}
             {% if paginator.count is 0 %}
-            <h3>You don't have any albums yet. <a href="{% url 'new_album' user.username %}">Create</a> one.</h3>
+            <h1>You don't have any albums yet. Create one.</h1>
+            {% endif %}
+            <div class="col-md-4">
+                <a href="{% url 'new_album' user.username %}"><div class="card mb-4 ">
+                    <div class="card-body align-self-center" >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                          </svg>    
+                    </div>
+            </div></a>
+            </div>
             {% endif %}
             {% for album in page %}
             <div class="col-md-4">
@@ -31,10 +43,15 @@
                                 {% if user == creator %}
                                 <a href="{% url 'delete_album' album.creator.username album.id %}" class="card-link"><span style="color: red;">Delete</span></a>
                                 {% endif %}
-                    </div>
+                    </div>  
                 </div>
             </div>
             {% endfor %}
         </div>
-    </div>
+        {% if page.has_other_pages %}
+        {% include "paginator.html" with items=page paginator=paginator %}
+        {% endif %}
+        </div>
+    
+    
 {% endblock %}
