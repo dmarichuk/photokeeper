@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
+from django.shortcuts import reverse
 
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
@@ -14,6 +14,10 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ['username']
+    
+    def get_absolute_url(self):
+        return reverse('profile', args=[str(self.username)])
+
 
 class Follow(models.Model):
     user = models.ForeignKey(

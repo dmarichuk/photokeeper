@@ -1,4 +1,4 @@
-
+from django.shortcuts import reverse
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -27,9 +27,12 @@ class Album(models.Model):
     class Meta:
         ordering = ['-date']
 
-    def __unicode__(self):
+    def __str__(self):
         return _('%s, %s, %s') % (self.title, self.date, self.creator)
 
+    def get_absolute_url(self):
+        return f'{int(self.id)}'
+            
 
 class Photo(models.Model):
     photo = models.ImageField(
@@ -59,7 +62,7 @@ class Photo(models.Model):
     class Meta:
         ordering = ['-date']
 
-    def __unicode__(self):
+    def __str__(self):
         return _("Photo's author: %s, date: %s") % (self.creator, self.date)
 
 

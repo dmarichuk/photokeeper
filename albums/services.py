@@ -10,7 +10,6 @@ def add_like(obj, user):
     obj_type = ContentType.objects.get_for_model(obj)
     like, is_created = Like.objects.get_or_create(
         content_type=obj_type, object_id=obj.id, user=user)
-    return like
 
 
 def delete_like(obj, user):

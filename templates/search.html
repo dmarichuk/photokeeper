@@ -9,7 +9,7 @@
     <ul class="list-group list-group-flush">  
             {% for user in users %}
             <li class="list-group-item">
-                Username: <a href="{% url 'profile' user.username %}">{{ user.username }}</a> </br>
+                Username: <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> </br>
                 Date joined: {{ user.date_joined | naturalday }} </br> 
                 Albums: <a href="{% url 'all_albums' user.username %}"> {{ user.albums.count }}</a>
             </li>

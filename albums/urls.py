@@ -13,7 +13,8 @@ urlpatterns = [
     re_path(r'^(?P<album_id>\d+)/photos/(?P<photo_id>\d+)/edit/delete/$', views.delete_photo, name='delete_photo'),
     re_path(r'^(?P<album_id>\d+)/photos/(?P<photo_id>\d+)/add_comment/$', views.add_comment, name='add_comment'),
     re_path(r'^(?P<album_id>\d+)/photos/(?P<photo_id>\d+)/delete_comment/(?P<comment_id>\d+)/$', views.delete_comment, name='delete_comment'),
-    re_path(r'^(?P<album_id>\d+)/photos/(?P<photo_id>\d+)/add_like/$', views.add_like_view, name='add_like'),
-    re_path(r'^(?P<album_id>\d+)/photos/(?P<photo_id>\d+)/delete_like/$', views.delete_like_view, name='delete_like'),
+    re_path(r'^(?P<photo_id>\d+)/like/$', views.like, name='like'),
+    
+
     
 ]

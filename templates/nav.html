@@ -12,7 +12,7 @@
     </nav>
     {% if user.is_authenticated %}
     <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-light" href='{% url 'profile' user.username %}'}>My profile</a>
+        <a class="p-2 text-light" href='{{user.get_absolute_url}}'>My profile</a>
         <a class="p-2 text-light" href='{% url 'logout' %}'>Log out</a>
     </nav>
     {% else %}

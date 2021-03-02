@@ -1,17 +1,32 @@
 from django.shortcuts import (
-    render, get_object_or_404, get_list_or_404, redirect)
+    render, get_object_or_404, get_list_or_404, redirect, )
+from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.views.generic.base import TemplateView
-from .models import User, Album, Photo, Comment
+from django.views.generic.base import TemplateView, View
+from .models import User, Album, Photo, Comment, Like
 from .forms import AlbumForm, PhotoForm, CommentForm, EditPhotoForm
-from .services import add_like, delete_like, is_fan
+from .services import add_like, delete_like, is_fan, get_fans
 from linkedlist.linked_list import CycleDoublyLinkedList as cdll
 from django.db.models import Q
 
 
 class IndexView(TemplateView):
-    template_name = "index.html"
+    template_name = "index.html"    
+
+
+def news(request):
+    all_albums = Album.objects.select_related('creator').all()
+    following_albums = Album.objects.filter(creator__followers__user=request.user)
+    my_comments = Comment.objects.filter(photo__creator=request.user)
+    
+    return render(
+        request,
+        'index.html',
+        {'all_albums': all_albums,
+         'following_albums': following_albums,
+         'my_comments': my_comments
+         })
 
 
 @login_required
@@ -122,6 +137,7 @@ def edit_album(request, username, album_id):
         'albums/edit_album.html',
         {"album": album, "form": form}
         )
+
 
 @login_required
 def delete_album(request, username, album_id):
@@ -257,44 +273,33 @@ def delete_comment(request, username, album_id, photo_id, comment_id):
             album_id=album_id,
             photo_id=photo_id)
 
-@login_required
-def add_like_view(request, username, album_id, photo_id):
-    photo = get_object_or_404(Photo, id=photo_id)
-    add_like(photo, request.user)
-    return redirect(
-            'get_photo',
-            username=username,
-            album_id=album_id,
-            photo_id=photo_id
-            )
 
 @login_required
-def delete_like_view(request, username, album_id, photo_id):
-    photo = get_object_or_404(Photo, id=photo_id)
-    delete_like(photo, request.user)
-    return redirect(
-            'get_photo',
-            username=username,
-            album_id=album_id,
-            photo_id=photo_id
-            )
+def like(request, username, photo_id):
+    user = request.user
+    photo = Photo.objects.get(pk=photo_id)
+    liked = is_fan(photo, user)
+    num_likes = len(list(get_fans(photo)))
+    if liked:
+        delete_like(photo, user)
+    else:
+        add_like(photo, user)
+    resp = {
+        'liked': liked,
+        'num_likes': num_likes,
+    }
+    return JsonResponse(resp, safe=False)
 
 
 def search(request):
     query = request.GET.get('q')
-
     users = User.objects.filter(username__icontains=query)
-    photos = Photo.objects.select_related('album').filter(tags__name__in=[query])
+    photos = Photo.objects.filter(tags__name__in=[query])
     albums = Album.objects.filter(Q(title__icontains=query) | Q(tags__name__in=[query]))
-    paginator_albums = Paginator(albums, 5)
-    page_number = 1
-    page = paginator_albums.get_page(page_number)
     return render(
         request,
         'search.html',
         {   
-            'p': paginator_albums,
-            'page': page,
             'users': users,
             'photos': photos,
             'albums': albums,
