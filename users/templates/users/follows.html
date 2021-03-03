@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %} {{profile.username}}'s follows {% endblock %}
+{% block header %} {{profile.username}}'s follows {% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ profile.get_absolute_url }}">{{ profile.username }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{profile.username}}'s follows</li>
+    </ol>
+</nav>
+{% endblock %}
+{% block content %}
+
+{% load humanize %}
+
+{% if follows %}
+    <ul class="list-group list-group">
+    {% for follow in follows %}
+        <li class="list-group-item">
+            <p>Username: <a href="{{ follow.user.get_absolute_url }}">{{ follow.user.username }}</a></p>
+            <p>Date joined: {{ follow.user.date_joined | naturalday }}</p> 
+            <p>Albums: <a href="{% url 'all_albums' follow.user.username %}"> {{ follow.user.albums.count }}</a></p>
+            <p>Followers:<a href="{% url 'followers' follow.user.username %}"> {{ follow.user.followers.count }}</a></p>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+<p>{{ profile.username }} doesn't follow anyone yet.</p>
+{% endif %}
+{% endblock %}

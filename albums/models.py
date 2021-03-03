@@ -29,7 +29,7 @@ class Album(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return _('%s, %s, %s') % (self.title, self.date, self.creator)
+        return self.title
 
     def get_absolute_url(self):
         return f'{int(self.id)}'
@@ -102,8 +102,7 @@ class Comment(models.Model):
     @property
     def total_likes(self):
         return self.likes.count()
-    
-
+  
 
 class Like(models.Model):
     user = models.ForeignKey(

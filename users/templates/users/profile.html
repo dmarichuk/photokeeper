@@ -5,29 +5,29 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ user.username }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ profile.username }}</li>
     </ol>
 </nav>
 {% endblock %}
 {% block content %}
-<div class="container align-items-center">
-    <div class="row justify-content-center">
-        <div class="col-auto">
+<div class="container">
+    <div class="row justify-content-lg-center">
+        <div class="col-lg-8">
             <div class="card shadow-sm">
             <div class="align-self-sm-center">
                 <h1><strong> {{ profile.username }}'s profile </strong></h1>
             </div>
             <div class="row">
-                <div class="col-auto">
-                <div class="card-body justify-content-between">
-                    <h3>First name: {{ profile.first_name }}</h3>
-                    <h3>Last name: {{ profile.last_name }}</h3>
-                    <h3>Username: {{ profile.username }}</h3>
-                    <h3>Date of registration: {{ profile.date_joined }}</h3>
-                    <h3>Followers: {{ profile.followers.count }}</h3>
-                    <h3>Follows: {{ profile.follows.count }}</h3>
-                    <h3>Albums: <a href="{% url 'all_albums' profile.username %}">{{profile.albums.count}}</a></h3>
-                    <h3>Total likes: {{ profile.likes.count }}</h3>
+                <div class="col-auto">   
+                <div class="card-body justify-content-start">
+                    <p>First name: {{ profile.first_name }}</p>
+                    <p>Last name: {{ profile.last_name }}</p>
+                    <p>Username: {{ profile.username }}</p>
+                    <p>Date of registration: {{ profile.date_joined }}</p>
+                    <p>Followers: <a id="follow-counter" href="{% url 'followers' profile.username %}">{{ profile.followers.count }}</a></p>
+                    <p>Follows: <a href="{% url 'follows' profile.username %}">{{ profile.follows.count }}</a></p>
+                    <p>Albums: <a href="{% url 'all_albums' profile.username %}">{{profile.albums.count}}</a></p>
+                    <p>Total likes: {{ profile.likes.count }}</p>
                     {% if profile == user %}
                                 <a class="btn btn-outline-dark btn-lg" href="{% url 'edit_profile' profile.username %}" role="button">Edit</a>
                     {% else %}
@@ -43,7 +43,7 @@
                     {% endif %}
                 </div>
                 </div>
-                <div class="col-3">
+                <div class="col-3 justify-content-end">
                 <div class="align-self-sm-end">
                                 {% load thumbnail %}
                                 {% thumbnail user.avatar "200x200" crop="center" as im %}
@@ -63,15 +63,16 @@
     var handleFollow = () => {
             $.ajax({
             type: 'GET',
-            url: "{% url 'follow' user.username %}",
+            url: "{% url 'follow' profile.username %}",
             
             success: function (response) {
                 console.log(response)
-                if (response.following) {
-                    
+                if (response.following) {     
           $('#follow').html("Unfollow");
+          $('#follow-counter').html(response.followers_counter);
         } else {
-          $('#like').html("Follow");
+          $('#follow').html("Follow");
+          $('#follow-counter').html(response.followers_counter);
         }       
             },
             error: function (error) {

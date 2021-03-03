@@ -10,5 +10,5 @@ Follow.objects.create(user=user, follower=test_user)
 actions = Action.objects.all()
 
 for action in actions:
-    print(f'{action.actor} {action.verb} {action.action_object} {action.target}')
+    print(f'{action.timestamp} {action.actor} {action.verb} {action.action_object} {action.target}')
 

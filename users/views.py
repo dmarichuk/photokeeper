@@ -6,6 +6,8 @@ from .models import User, Follow
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from actstream import action
+from actstream.actions import follow, unfollow
 
 class SignUp(CreateView):
     form_class = CreationForm
@@ -58,12 +60,45 @@ def follow(request, username):
     user = get_object_or_404(User, username=username)
     follow = Follow.objects.filter(user=user, follower=follower)
     following = follow.exists()
-    if following and follower != user:
-        follow.delete()
-    else:
-        following = True
-        Follow.objects.create(user=user, follower=follower)
+    if follower != user:
+        if following:
+            follow.delete()
+            unfollow(follower, user)
+            following = False
+        else:
+            Follow.objects.create(user=user, follower=follower)
+            follow(follower, user)
+            following = True
+            action.send(follower, verb='started following', action_object=user)
+    followers_counter = user.followers.count()
     resp = {
         'following': following,
+        'followers_counter': followers_counter,
     }
     return JsonResponse(resp, safe=False)
+
+
+def followers(request, username):
+    profile = get_object_or_404(User, username=username)
+    followers = profile.followers.all()
+    return render(
+        request,
+        'users/followers.html',
+        {
+            'followers': followers,
+            'profile': profile,
+        }
+    )
+
+
+def follows(request, username):
+    profile = get_object_or_404(User, username=username)
+    follows = profile.follows.all()
+    return render(
+        request,
+        'users/follows.html',
+        {
+            'follows': follows,
+            'profile': profile,
+        }
+    )

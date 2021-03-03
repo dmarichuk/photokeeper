@@ -9,9 +9,10 @@
     <ul class="list-group list-group-flush">  
             {% for user in users %}
             <li class="list-group-item">
-                Username: <a href="{{ user.get_absolute_url }}">{{ user.username }}</a> </br>
-                Date joined: {{ user.date_joined | naturalday }} </br> 
-                Albums: <a href="{% url 'all_albums' user.username %}"> {{ user.albums.count }}</a>
+                <p>Username: <a href="{{ user.get_absolute_url }}">{{ user.username }}</a></p>
+                <p>Date joined: {{ user.date_joined | naturalday }}</p>
+                <p>Albums: <a href="{% url 'all_albums' user.username %}"> {{ user.albums.count }}</a></p>
+                <p>Followers:<a href="{% url 'followers' user.username %}"> {{ user.followers.count }}</a></p>
             </li>
         </br>
         {% endfor %}

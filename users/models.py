@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import reverse
-from actstream import action
+
 
 
 class User(AbstractUser):
@@ -19,6 +19,7 @@ class User(AbstractUser):
     
     def get_absolute_url(self):
         return reverse('profile', args=[str(self.username)])
+    
 
 
 class Follow(models.Model):
@@ -38,7 +39,3 @@ class Follow(models.Model):
         unique_together = (
             ("user", "follower"),
         )
-    
-    def save(self, *args, **kwargs):
-        action.send(self.follower, verb='start following', action_object=self.user)
-        super().save(*args, **kwargs)

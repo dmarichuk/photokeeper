@@ -5,6 +5,7 @@
 {% block header %} Welcome to Photokeeper! {% endblock %}
 
 {% block content %}
+
  {% if messages %}
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         {% for message in messages %}
@@ -18,7 +19,7 @@
 <div class="jumbotron-fluid">
 
     <div class="container-fluid">
-
+    <!-- {% include 'albums/news.html' %} -->
         {% if user.is_authenticated %}
             <div class="row justify-content-md-center">
                 <h3><p>Photokeeper is a web-application for organizing albums.
@@ -51,9 +52,10 @@
                 </div>
             </div>
         {% endif %}
+        
     </div>
 </div>    
-    {% include 'albums/news.html' %}
+    
 
 
 

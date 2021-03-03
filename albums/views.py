@@ -10,24 +10,25 @@ from .services import add_like, delete_like, is_fan, get_fans
 from linkedlist.linked_list import CycleDoublyLinkedList as cdll
 from django.db.models import Q
 from actstream import action
-from actstream.models import Action
+from actstream.models import model_stream, user_stream
+
 
 class IndexView(TemplateView):
     template_name = "index.html"    
 
 
 def news(request):
-    all_albums = Album.objects.select_related('creator').all()
-    following_albums = Album.objects.filter(creator__followers__user=request.user)
-    my_comments = Comment.objects.filter(photo__creator=request.user)
-    
+    all_updates = model_stream(model=User)
+    if request.user.is_authenticated:
+        user_updates = user_stream(request.user, with_user_activity=True)
     return render(
         request,
-        'news.html',
-        {'all_albums': all_albums,
-         'following_albums': following_albums,
-         'my_comments': my_comments
-         })
+        'albums/news.html',
+        {
+            'all_updates': all_updates,
+            'user_updates': user_updates,
+        }
+    )
 
 
 @login_required
@@ -109,8 +110,8 @@ def new_album(request, username):
     if form.is_valid():
         album = form.save(commit=False)
         album.creator = request.user
-        action.send(album.creator, verb='created', action_object=album)
         album.save()
+        action.send(album.creator, verb='created', action_object=album)
         form.save_m2m()
         return redirect('all_albums', username=request.user.username)
     return render(

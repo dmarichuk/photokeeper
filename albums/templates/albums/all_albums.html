@@ -15,10 +15,10 @@
 
     <div class="container">
         <div class="row">
-            {% if user == creator %}
             {% if paginator.count is 0 %}
+            {% if user == creator %}
             <h1>You don't have any albums yet. Create one.</h1>
-            {% endif %}
+            
             <div class="col-md-4">
                 <a href="{% url 'new_album' user.username %}"><div class="card mb-4 ">
                     <div class="card-body align-self-center" >
@@ -29,6 +29,9 @@
                     </div>
             </div></a>
             </div>
+            {% else %}
+            <h1>{{ creator.username }} doesn't have any albums yet.</h1>
+            {% endif %}
             {% endif %}
             {% for album in page %}
             <div class="col-md-4">

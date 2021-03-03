@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content%}
+{% load humanize %}
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="nav-all-updates" data-toggle="tab"  role="tab" aria-controls="nav-all-updates" aria-selected="true">All updates</a>
+      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</a>
+      <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</a>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane show active" id="nav-all-updates" role="tabpanel" aria-labelledby="nav-all-updates">
+        <ul class="list-group list-group-flush">
+        {% for obj in page %}
+        <li class="list-group-item">
+            <p>
+                <small>{{ obj.timestamp | naturaltime}}</small>
+                <a href="{{ obj.actor.get_absolute_url }}">{{obj.actor}}</a> 
+                {{obj.verb}} 
+                {% if obj.action_object %}
+                <a href="{{ obj.action_object.get_absolute_url }}">{{obj.action_object}}</a>
+                {% elif obj.target %}
+                <a href="{{ obj.target.get_absolute_url }}">{{obj.target}}</a>
+                {% endif %}
+            </p>
+        </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>
+    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+  </div>
+{% endblock %}
