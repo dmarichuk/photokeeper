@@ -9,7 +9,8 @@ from .forms import AlbumForm, PhotoForm, CommentForm, EditPhotoForm
 from .services import add_like, delete_like, is_fan, get_fans
 from linkedlist.linked_list import CycleDoublyLinkedList as cdll
 from django.db.models import Q
-
+from actstream import action
+from actstream.models import Action
 
 class IndexView(TemplateView):
     template_name = "index.html"    
@@ -22,7 +23,7 @@ def news(request):
     
     return render(
         request,
-        'index.html',
+        'news.html',
         {'all_albums': all_albums,
          'following_albums': following_albums,
          'my_comments': my_comments
@@ -108,6 +109,7 @@ def new_album(request, username):
     if form.is_valid():
         album = form.save(commit=False)
         album.creator = request.user
+        action.send(album.creator, verb='created', action_object=album)
         album.save()
         form.save_m2m()
         return redirect('all_albums', username=request.user.username)
@@ -179,6 +181,10 @@ def add_photo(request, username, album_id):
                     'album_id': album_id,
                     'common_tags': common_tags,
                     })
+    if len(files) > 1:
+        action.send(request.user, verb=f'added {len(files)} photos to', target=photo.album)
+    else:
+        action.send(request.user, verb=f'added photo to', target=photo.album)
     return redirect('one_album', request.user.username, album_id)
 
 
@@ -247,6 +253,7 @@ def add_comment(request, username, album_id, photo_id):
         comment = form.save(commit=False)
         comment.creator = request.user
         comment.photo = photo
+        action.send(request.user, verb='commented', action_object=photo, target=photo.album)
         comment.save()
         return redirect(
             'get_photo',

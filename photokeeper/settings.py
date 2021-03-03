@@ -35,7 +35,7 @@ INSTALLED_APPS = [
 
     'albums',
     'users',
-
+    'actstream',
     # Other apps
 
     'sorl.thumbnail',
@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+   
+    # Activity stream
+    
 ]
 
 MIDDLEWARE = [
@@ -162,3 +165,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'files', 'sent_emails')
 
 TAGGIT_CASE_INSENSITIVE = True
+
+ACTSTREAM_SETTINGS = {
+    'MANAGER': 'albums.managers.MyActionManager',
+    'FETCH_RELATIONS': True,
+    'USE_PREFETCH': True,
+    'USE_JSONFIELD': False,
+    'GFK_FETCH_DEPTH': 1,
+}

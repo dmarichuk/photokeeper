@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import reverse
+from actstream import action
+
 
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
@@ -36,3 +38,7 @@ class Follow(models.Model):
         unique_together = (
             ("user", "follower"),
         )
+    
+    def save(self, *args, **kwargs):
+        action.send(self.follower, verb='start following', action_object=self.user)
+        super().save(*args, **kwargs)

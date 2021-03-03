@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from taggit.managers import TaggableManager
+from actstream import action
 
 User = get_user_model()
 
@@ -32,7 +33,7 @@ class Album(models.Model):
 
     def get_absolute_url(self):
         return f'{int(self.id)}'
-            
+
 
 class Photo(models.Model):
     photo = models.ImageField(
@@ -63,7 +64,7 @@ class Photo(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return _("Photo's author: %s, date: %s") % (self.creator, self.date)
+        return f'Photo {self.id}'
 
 
     @property
@@ -95,12 +96,13 @@ class Comment(models.Model):
     class Meta:
         ordering = ['-date']
 
-    def __unicode__(self):
+    def __str__(self):
         return _('Text: %s, Author %s') % (self.text, self.creator)
 
     @property
     def total_likes(self):
         return self.likes.count()
+    
 
 
 class Like(models.Model):

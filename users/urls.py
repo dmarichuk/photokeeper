@@ -4,8 +4,7 @@ from . import views
 urlpatterns = [
     re_path('^$', views.view_profile, name='profile'),
     re_path('^edit/$', views.edit_profile, name='edit_profile'),
-    re_path('^follow/$', views.follow_profile, name='follow_profile'),
-    re_path('^unfollow/$', views.unfollow_profile, name='unfollow_profile'),
+    re_path('^follow/$', views.follow, name='follow'),
 
 ]
 

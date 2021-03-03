@@ -32,18 +32,14 @@
                                 <a class="btn btn-outline-dark btn-lg" href="{% url 'edit_profile' profile.username %}" role="button">Edit</a>
                     {% else %}
                         {% if user.is_authenticated %}
-                            {% if following %}
-                                <a class="btn btn-lg btn-outline-secondary"
-                                        href="{% url 'unfollow_profile' profile.username %}" role="button">
-                                        Unfollow
-                                </a>
-                                {% else %}
-                                <a class="btn btn-lg btn-secondary"
-                                        href="{% url 'follow_profile' profile.username %}" role="button">
-                                        Follow
-                                </a>
-                                {% endif %}
+                        <button class="btn btn-lg btn-outline-secondary" id="follow-button">   
+                            {% if following %}        
+                        <a id="follow">Unfollow</a>
+                            {% else %}        
+                        <a id="follow">Follow</a>                
                             {% endif %}
+                        </button> 
+                        {% endif %}
                     {% endif %}
                 </div>
                 </div>
@@ -56,26 +52,35 @@
                 </div>
                 </div>
             </div>
-{#                           {% if user.is_authenticated %}#}
-{#                           <li class="list-group-item">#}
-{#                                #}
-{#                                {% if following %}#}
-{#                                <a class="btn btn-lg btn-light" #}
-{#                                        href="{% url 'profile_unfollow' author.username %}" role="button"> #}
-{#                                        Отписаться #}
-{#                                </a> #}
-{#                                {% else %}#}
-{#                                <a class="btn btn-lg btn-primary" #}
-{#                                        href="{% url 'profile_follow' author.username %}" role="button">#}
-{#                                Подписаться #}
-{#                                </a>#}
-{#                                {% endif %}#}
-{#                            </li>#}
-{#                            {% endif %}#}
 
 
                     </div>
             </div>
     </div>
 </div>
+<script defer>
+
+    var handleFollow = () => {
+            $.ajax({
+            type: 'GET',
+            url: "{% url 'follow' user.username %}",
+            
+            success: function (response) {
+                console.log(response)
+                if (response.following) {
+                    
+          $('#follow').html("Unfollow");
+        } else {
+          $('#like').html("Follow");
+        }       
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    };
+    
+    document.getElementById("follow-button").addEventListener('click', ()=>{
+        handleFollow()})
+</script>
 {% endblock %}

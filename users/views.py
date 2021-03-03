@@ -5,7 +5,7 @@ from .forms import CreationForm, EditProfileForm
 from .models import User, Follow
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
-
+from django.http import JsonResponse
 
 class SignUp(CreateView):
     form_class = CreationForm
@@ -53,15 +53,17 @@ def edit_profile(request, username):
         })
 
 
-def follow_profile(request, username):
-    get_follow = get_object_or_404(User, username=username)
-    if get_follow != request.user:
-        Follow.objects.get_or_create(user=get_follow, follower=request.user)
-    return redirect("profile", username=username)
-
-
-def unfollow_profile(request, username):
-    get_follow = get_object_or_404(User, username=username)
-    follow = Follow.objects.filter(user=get_follow, follower=request.user, )
-    follow.delete()
-    return redirect("profile", username=username)
+def follow(request, username):
+    follower = request.user
+    user = get_object_or_404(User, username=username)
+    follow = Follow.objects.filter(user=user, follower=follower)
+    following = follow.exists()
+    if following and follower != user:
+        follow.delete()
+    else:
+        following = True
+        Follow.objects.create(user=user, follower=follower)
+    resp = {
+        'following': following,
+    }
+    return JsonResponse(resp, safe=False)
