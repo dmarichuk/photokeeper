@@ -13,6 +13,7 @@ import os
 
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,11 +36,13 @@ INSTALLED_APPS = [
 
     'albums',
     'users',
-    'actstream',
+
     # Other apps
 
     'sorl.thumbnail',
     'taggit',
+    'actstream',
+    'el_pagination',
 
     # Default apps
 
@@ -50,9 +53,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-   
-    # Activity stream
-    
 ]
 
 MIDDLEWARE = [
@@ -79,7 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media'
+                'django.template.context_processors.media',
             ],
             'libraries':{
                 'css_filters': 'templates.templatetags.css_filters',
@@ -139,17 +139,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images) & Media files
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'files', 'media')
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'files', 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, 'files', 'photokeeper', 'static'),
-)
 STATIC_URL = '/static/'
-STATICFILES_FINDERS = (
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder")
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'files', 'photokeeper'),
+)
+
 # Custom user model
 
 AUTH_USER_MODEL = 'users.User'
@@ -162,7 +160,7 @@ LOGOUT_REDIRECT_URL = 'index'
 # Email backend
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'files', 'sent_emails')
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 TAGGIT_CASE_INSENSITIVE = True
 

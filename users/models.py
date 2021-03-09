@@ -9,8 +9,9 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     avatar = models.ImageField(
         _('profile picture'),
-        upload_to='users/',
-        default='users/default-avatar.jpg',
+        help_text=_('only images formats allowed'),
+        upload_to='avatars/',
+        default='avatars/default/default-avatar.jpg',
         blank=True
         )
 
@@ -20,7 +21,6 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse('profile', args=[str(self.username)])
     
-
 
 class Follow(models.Model):
     user = models.ForeignKey(

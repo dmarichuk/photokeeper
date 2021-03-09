@@ -1,0 +1,21 @@
+{% load humanize %}
+{% load el_pagination_tags %}
+{% paginate photos using 'search_photos_page' %}
+    <ul class="list-group list-group-flush">   
+        {% for photo in photos %}
+        <li class="list-group-item"> 
+         {% load thumbnail %}
+                    {% thumbnail photo.photo "400x200" crop="center" as im %}
+                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+            </br>
+                Description: {{ photo.description }} </br>
+                User: <a href="{% url 'profile' photo.creator.username %}">{{ photo.creator.username }}</a> </br>
+                Album: <a href="{% url 'one_album' photo.creator.username photo.album.id %}">{{ photo.album.title }}</a> </br>
+                <a href="{% url 'get_photo' photo.creator.username photo.album.id photo.id%}">Link</a>  
+        
+        </br>
+        </li>
+        {% endfor %}
+    </ul>
+{% show_more "Load more" %} 

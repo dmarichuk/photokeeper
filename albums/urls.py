@@ -3,7 +3,7 @@ from django.urls import re_path
 
 urlpatterns = [
     re_path(r'^albums/$', views.all_albums, name='all_albums'),
-    re_path(r'^albums/(?P<album_id>\d+)/$', views.one_album, name='one_album'),
+    re_path(r'(?P<album_id>\d+)/$', views.one_album, name='one_album'),
     re_path(r'^new_album/$', views.new_album, name='new_album'),
     re_path(r'^(?P<album_id>\d+)/edit/$', views.edit_album, name='edit_album'),
     re_path(r'^(?P<album_id>\d+)/edit/delete/$', views.delete_album, name='delete_album'),

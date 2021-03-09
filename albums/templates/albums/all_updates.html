@@ -1,0 +1,20 @@
+{% load humanize %}
+    <ul class="list-group list-group-flush">
+      {% load el_pagination_tags %}
+      {% paginate all_updates %}
+          {% for obj in all_updates %}
+            <li class="list-group-item">
+                <p>
+                    <small class='mb-2 text-muted'>{{ obj.timestamp | naturaltime}}</small>
+                    <a href="{{ obj.actor.get_absolute_url }}">{{obj.actor}}</a> 
+                    {{obj.verb}} 
+                    {% if obj.action_object %}
+                    <a href="{{ obj.action_object.get_absolute_url }}">{{obj.action_object}}</a>
+                    {% elif obj.target %}
+                    <a href="{{ obj.target.get_absolute_url }}">{{obj.target}}</a>
+                    {% endif %}
+                </p>
+            </li>
+          {% endfor %}
+    </ul>
+    {% show_more "Load more" %} 

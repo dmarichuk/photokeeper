@@ -11,25 +11,29 @@ from linkedlist.linked_list import CycleDoublyLinkedList as cdll
 from django.db.models import Q
 from actstream import action
 from actstream.models import model_stream, user_stream
+from el_pagination.decorators import page_templates
 
 
-class IndexView(TemplateView):
-    template_name = "index.html"    
+@page_templates({
+    'albums/all_updates.html': None,
+    'albums/profile_updates.html': 'profile_updates_page',
+    })
+def index(request, template='index.html', extra_context=None):
 
-
-def news(request):
     all_updates = model_stream(model=User)
-    if request.user.is_authenticated:
-        user_updates = user_stream(request.user, with_user_activity=True)
-    return render(
-        request,
-        'albums/news.html',
-        {
-            'all_updates': all_updates,
-            'user_updates': user_updates,
-        }
-    )
 
+    context = {
+        'all_updates': all_updates,
+    }
+
+    if request.user.is_authenticated:
+        profile_updates = user_stream(request.user, with_user_activity=True)
+        context['profile_updates'] = profile_updates
+
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render(request, template, context)
 
 @login_required
 def all_albums(request, username):
@@ -226,6 +230,11 @@ def delete_photo(request, username, album_id, photo_id):
         photo = Photo.objects.get(pk=photo_id)
         get_next = lst.get_next(photo)
         photo.delete()
+        if get_next is None:
+            return redirect(
+                'one_album',
+                username=username,
+                album_id=album_id)
         return redirect(
             'get_photo',
             username=username,
@@ -292,24 +301,31 @@ def like(request, username, photo_id):
         delete_like(photo, user)
     else:
         add_like(photo, user)
+        action.send(user, verb='liked', action_object=photo)
     resp = {
         'liked': liked,
         'num_likes': num_likes,
     }
     return JsonResponse(resp, safe=False)
 
-
-def search(request):
+@page_templates({
+    'search_users.html': 'search_users_page',
+    'search_albums.html': 'search_albums_page',
+    'search_photos.html': 'search_photos_page',
+    })
+def search(request, template='search.html', extra_context=None):
     query = request.GET.get('q')
     users = User.objects.filter(username__icontains=query)
     photos = Photo.objects.filter(tags__name__in=[query])
     albums = Album.objects.filter(Q(title__icontains=query) | Q(tags__name__in=[query]))
-    return render(
-        request,
-        'search.html',
-        {   
+
+    context = {
             'users': users,
             'photos': photos,
             'albums': albums,
         }
-    )
+
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render(request, template, context)

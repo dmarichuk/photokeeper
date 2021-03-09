@@ -55,14 +55,14 @@ def edit_profile(request, username):
         })
 
 
-def follow(request, username):
+def handle_follow(request, username):
     follower = request.user
     user = get_object_or_404(User, username=username)
-    follow = Follow.objects.filter(user=user, follower=follower)
-    following = follow.exists()
+    get_follow = Follow.objects.filter(user=user, follower=follower)
+    following = get_follow.exists()
     if follower != user:
         if following:
-            follow.delete()
+            get_follow.delete()
             unfollow(follower, user)
             following = False
         else:

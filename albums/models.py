@@ -32,7 +32,7 @@ class Album(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'{int(self.id)}'
+        return reverse('one_album', args=[self.creator.username, self.id])
 
 
 class Photo(models.Model):
@@ -64,8 +64,10 @@ class Photo(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return f'Photo {self.id}'
+        return 'Photo'
 
+    def get_absolute_url(self):
+        return reverse('get_photo', args=[self.creator.username, self.album.id, self.id])
 
     @property
     def total_likes(self):

@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}{{user.username}}'s profile{% endblock %}
-{% block header %}{% endblock %}
+{% block header %}
+<style>
+    img {
+      border-radius: 50%;
+    }
+</style>
+{% endblock %}
 {% block breadcrumbs %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -18,7 +24,7 @@
                 <h1><strong> {{ profile.username }}'s profile </strong></h1>
             </div>
             <div class="row">
-                <div class="col-auto">   
+                <div class="col-8">   
                 <div class="card-body justify-content-start">
                     <p>First name: {{ profile.first_name }}</p>
                     <p>Last name: {{ profile.last_name }}</p>
@@ -43,14 +49,15 @@
                     {% endif %}
                 </div>
                 </div>
-                <div class="col-3 justify-content-end">
-                <div class="align-self-sm-end">
+                <div class="col-3">
                                 {% load thumbnail %}
-                                {% thumbnail user.avatar "200x200" crop="center" as im %}
-                                    <img class="card-img" src="{{ im.url }}"/>
+                                {% thumbnail profile.avatar "200x200" crop='center' as im %}
+                                    <img class="img" src="{{ im.url }}" alt="avatar"/>
                                 {% endthumbnail %}
                 </div>
                 </div>
+                
+                
             </div>
 
 

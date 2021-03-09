@@ -1,0 +1,16 @@
+{% load humanize %}
+{% load el_pagination_tags %}
+{% paginate albums using 'search_albums_page' %}
+    <ul class="list-group list-group-flush">    
+        {% for album in albums %}
+        <li class="list-group-item">  
+                Title: <a href="{% url 'one_album' user.username album.id %}">{{ album.title }}</a> </br>
+                Username:<a href="{% url 'profile' user.username %}">{{ album.creator.username }}</a> </br>
+                Publiction date: {{ album.date | naturalday }} </br>
+                Number of photos: {{ album.photos.count }} 
+            
+        </br>
+        </li> 
+        {% endfor %} 
+    </ul>
+    {% show_more "Load more" %}
