@@ -132,3 +132,4 @@ dmypy.json
 static/
 media/
 .gitignore
+test_files/

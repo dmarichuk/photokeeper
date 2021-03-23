@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'taggit',
     'actstream',
     'el_pagination',
+    'coverage',
 
     # Default apps
 

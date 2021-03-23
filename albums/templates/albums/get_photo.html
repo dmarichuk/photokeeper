@@ -36,7 +36,7 @@
                     {% if tags %}
                     <p>Photo tags: 
                         {% for tag in tags %}
-                            <a class="badge badge-dark"><span style="color: white;">{{ tag }}</span></a>
+                            <a class="badge badge-dark" href="{% url 'search'%}?q={{ tag }}"><span style="color: white;">{{ tag }}</span></a>
                         {% endfor %}
                         </p>
                     {% endif %}
@@ -56,8 +56,8 @@
                             {% else %}
                                 <a  href="{% url 'profile' photo.creator.username %}">@{{ photo.creator }}</a>
                             {% endif %}
-                            <button class="btn btn-outline" id="like-button">   
                             {% if user.is_authenticated %}
+                            <button class="btn btn-outline" id="like-button">   
                                 {% if liked %}
                             <a
                             style="color: red"
@@ -114,8 +114,9 @@ document.onkeydown = function getNext(key){
 }
 </script>
 
-
+{% if user.is_authenticated %}
 <script>
+
 var handleLike = () => {
     $.ajax({
     type: 'GET',
@@ -142,4 +143,5 @@ var handleLike = () => {
 
 document.getElementById("like-button").addEventListener('click', ()=>{handleLike()})
 </script>
+{% endif %}
 {% endblock %}

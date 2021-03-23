@@ -1,13 +1,16 @@
-from django.views.generic import CreateView
-from django.urls import reverse_lazy
-from django.contrib.auth.views import LogoutView
-from .forms import CreationForm, EditProfileForm
-from .models import User, Follow
-from django.contrib import messages
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
 from actstream import action
 from actstream.actions import follow, unfollow
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LogoutView
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+
+from .forms import CreationForm, EditProfileForm
+from .models import Follow, User
+
 
 class SignUp(CreateView):
     form_class = CreationForm
@@ -37,6 +40,7 @@ def view_profile(request, username):
         })
 
 
+@login_required
 def edit_profile(request, username):
     profile = get_object_or_404(User, username=username)
     if request.user != profile:
@@ -55,6 +59,7 @@ def edit_profile(request, username):
         })
 
 
+@login_required
 def handle_follow(request, username):
     follower = request.user
     user = get_object_or_404(User, username=username)

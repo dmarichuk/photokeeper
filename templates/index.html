@@ -22,10 +22,14 @@
     
         {% if user.is_authenticated %}
             <div class="row justify-content-md-center">
-                <h3><p>Photokeeper is a web-application for organizing albums.
-                You can store your precious photos in albums, add description, tags,
-                search for other user albums, like their photos and be liked back.<p>
-                <p>It is a learning project so any feedback would be appreciated.</p></h3>
+                <h3>
+                    <p>
+                    Photokeeper is a web-application for organizing albums.
+                    You can store your precious photos in albums, add description, tags,
+                    search for other user albums, like their photos and be liked back.
+                    <p>
+                <p>It is a learning project so any feedback would be appreciated.</p>
+                </h3>
                 <div class="row">
                     <div class="col-md-4-2">
                         <a href="{% url 'new_album' user.username %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Create new album</a>
@@ -39,8 +43,11 @@
         {% else %}
 
             <div class="row">
-                <h3>Photokeeper is a web-application for organizing albums. Please sign-in to continue.</h3>
-                <h3>If you don't have an account, please, feel free to sign-up :)</h3>
+                <h3>
+                <p>Photokeeper is a web-application for organizing albums.</p>
+                <p>If you don't have an account, please, feel free to sign-up :)</p>
+                <p>It is a learning project so any feedback would be appreciated.</p>
+                </h3>
             </div>
             <div class="row justify-content-md-center">
                 <div class="col col-lg-2">

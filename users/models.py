@@ -1,8 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import reverse
-
+from django.utils.translation import ugettext_lazy as _
 
 
 class User(AbstractUser):
@@ -11,16 +10,16 @@ class User(AbstractUser):
         _('profile picture'),
         help_text=_('only images formats allowed'),
         upload_to='avatars/',
-        default='avatars/default/default-avatar.jpg',
+        default='avatars/default/default-avatar.png',
         blank=True
         )
 
     class Meta:
         ordering = ['username']
-    
+
     def get_absolute_url(self):
         return reverse('profile', args=[str(self.username)])
-    
+
 
 class Follow(models.Model):
     user = models.ForeignKey(

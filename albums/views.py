@@ -1,17 +1,18 @@
-from django.shortcuts import (
-    render, get_object_or_404, get_list_or_404, redirect, )
-from django.http import JsonResponse
-from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
-from django.views.generic.base import TemplateView, View
-from .models import User, Album, Photo, Comment, Like
-from .forms import AlbumForm, PhotoForm, CommentForm, EditPhotoForm
-from .services import add_like, delete_like, is_fan, get_fans
-from linkedlist.linked_list import CycleDoublyLinkedList as cdll
-from django.db.models import Q
 from actstream import action
 from actstream.models import model_stream, user_stream
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import (get_list_or_404, get_object_or_404, redirect,
+                              render)
 from el_pagination.decorators import page_templates
+
+from linkedlist.linked_list import CycleDoublyLinkedList as cdll
+
+from .forms import AlbumForm, CommentForm, EditPhotoForm, PhotoForm
+from .models import Album, Comment, Photo, User
+from .services import add_like, delete_like, get_fans, is_fan
 
 
 @page_templates({
@@ -35,7 +36,7 @@ def index(request, template='index.html', extra_context=None):
 
     return render(request, template, context)
 
-@login_required
+
 def all_albums(request, username):
     creator = get_object_or_404(User, username=username)
     albums = Album.objects.filter(creator=creator)
@@ -51,7 +52,6 @@ def all_albums(request, username):
          })
 
 
-@login_required
 def one_album(request, username, album_id):
     album = get_object_or_404(Album, id=album_id)
     photos = album.photos.all()
@@ -67,7 +67,6 @@ def one_album(request, username, album_id):
          })
 
 
-@login_required
 def get_photo(request, username, album_id, photo_id):
     photos = get_list_or_404(Photo, album__id=album_id)
     lst = cdll(photos)
@@ -157,6 +156,7 @@ def delete_album(request, username, album_id):
 @login_required
 def add_photo(request, username, album_id):
     common_tags = Photo.tags.most_common()[:4]
+    album = Album.objects.get(pk=album_id)
     if request.method != "POST":
         form = PhotoForm()
         return render(
@@ -174,7 +174,7 @@ def add_photo(request, username, album_id):
             photo = form.save(commit=False)
             photo.photo = f
             photo.creator = request.user
-            photo.album = Album.objects.get(pk=album_id)
+            photo.album = album
             photo.save()
             form.save_m2m()
         else:
@@ -187,9 +187,10 @@ def add_photo(request, username, album_id):
                     'common_tags': common_tags,
                     })
     if len(files) > 1:
-        action.send(request.user, verb=f'added {len(files)} photos to', target=photo.album)
+        action.send(
+            request.user, verb=f'added {len(files)} photos to', target=album)
     else:
-        action.send(request.user, verb=f'added photo to', target=photo.album)
+        action.send(request.user, verb='added photo to', target=album)
     return redirect('one_album', request.user.username, album_id)
 
 
@@ -229,8 +230,9 @@ def delete_photo(request, username, album_id, photo_id):
         lst = cdll(photos)
         photo = Photo.objects.get(pk=photo_id)
         get_next = lst.get_next(photo)
+        print(get_next)
         photo.delete()
-        if get_next is None:
+        if len(photos) <= 1:
             return redirect(
                 'one_album',
                 username=username,
@@ -248,6 +250,7 @@ def delete_photo(request, username, album_id, photo_id):
         photo_id=photo_id
         )
 
+
 @login_required
 def add_comment(request, username, album_id, photo_id):
     photo = get_object_or_404(
@@ -263,7 +266,11 @@ def add_comment(request, username, album_id, photo_id):
         comment = form.save(commit=False)
         comment.creator = request.user
         comment.photo = photo
-        action.send(request.user, verb='commented', action_object=photo, target=photo.album)
+        action.send(
+            request.user,
+            verb='commented',
+            action_object=photo,
+            target=photo.album)
         comment.save()
         return redirect(
             'get_photo',
@@ -273,6 +280,7 @@ def add_comment(request, username, album_id, photo_id):
         )
     return render(
         request, "albums/album_photo.html", {"photo": photo, "form": form})
+
 
 @login_required
 def delete_comment(request, username, album_id, photo_id, comment_id):
@@ -308,6 +316,7 @@ def like(request, username, photo_id):
     }
     return JsonResponse(resp, safe=False)
 
+
 @page_templates({
     'search_users.html': 'search_users_page',
     'search_albums.html': 'search_albums_page',
@@ -317,7 +326,8 @@ def search(request, template='search.html', extra_context=None):
     query = request.GET.get('q')
     users = User.objects.filter(username__icontains=query)
     photos = Photo.objects.filter(tags__name__in=[query])
-    albums = Album.objects.filter(Q(title__icontains=query) | Q(tags__name__in=[query]))
+    albums = Album.objects.filter(
+        Q(title__icontains=query) | Q(tags__name__in=[query]))
 
     context = {
             'users': users,

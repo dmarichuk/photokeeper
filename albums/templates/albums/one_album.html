@@ -11,14 +11,20 @@
 </nav>
 {% endblock %}
 {% block content %}
-{% if user == album.creator  %}
-        {% if paginator.count == 0 %}
-            <h3>You don't have any photos in this album yet.</h3>
-        {% endif %}
+
+{% if paginator.count == 0 %}
+        {% if user == album.creator %}
+        <h3>You don't have any photos in this album yet.</h3>
+        {% else %}
+        <h3>This album doesn't have any photos yet.</h3>
+        {% endif %}      
+{% endif %}
+        
 <div class="container">
     <div class="row">
+        {% if user == album.creator %}
         <div class="col-md-4">
-            <a href="{% url 'add_photo' user.username album.id %}">
+            <a href="{% url 'add_photo' album.creator.username album.id %}">
                 <div class="card mb-4 shadow-sm ">
                     <div class="card-body align-self-center" >
                         <svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
@@ -28,7 +34,7 @@
                 </div>
         </div></a>
         </div>
-        
+        {% endif %}
         {% for photo in page %}
         <div class="col-md-4">
             <div class="card mb-4 shadow-sm">
@@ -44,7 +50,7 @@
                         <small class="text-muted"> {{ photo.comments.count }} comments</small>
                         <small class="text-muted"> {{photo.total_likes}} likes</small>
                         <div class="btn-group">
-                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'get_photo' photo.creator.username album.id photo.id %}" role="button">View</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ photo.get_absolute_url }}" role="button">View</a>
                         {% if user == photo.creator %}
                             <a class="btn btn-outline-secondary btn-sm" href="{% url 'edit_photo' photo.creator.username album.id photo.id %}" role="button">Edit</a>
                         {% endif %}
@@ -57,9 +63,6 @@
         {% if page.has_other_pages %}
             {% include "paginator.html" with items=page paginator=paginator %}
         {% endif %}
-    {% else %}
-        <h3>This album doesn't have any photos yet.</h3>
-    {% endif %}
     </div>
 </div>
 {% endblock %}
