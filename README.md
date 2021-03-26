@@ -64,6 +64,7 @@ This part is still in development :)
 
 * [Python 3.8.5](https://www.python.org/)
 * [Django 3.1.2](https://www.djangoproject.com/)
+* [Bootstrap 4](https://getbootstrap.com/)
 
  
 ## Author
